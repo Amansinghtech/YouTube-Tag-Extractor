@@ -2,8 +2,10 @@ from bs4 import BeautifulSoup
 import json
 import requests as req
 import urllib.parse as par
+print("....YOUTUBE VIDEOS TAG EXTRACTOR....\n")
+print("Description:\n==>With the help of this tool you can easily extract tags from popular videos on youtube.\n==> These tags are very useful for YouTube Search Engine Optimization.\n")
 
-keyword = input("Enter a Keyword:")
+keyword = input("Enter Your Search Keyword:")
 while keyword == '' or keyword == ' ':
     print("Invalid input detected")
     keyword = input("Enter a Keyword:")
