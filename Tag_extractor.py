@@ -33,6 +33,14 @@ def tag_extractor(url):
             final = final.replace(':', '')
             return (json.loads(final))
 
+final = []
+
 for link in walker(keyword):
     url = 'https://www.youtube.com' + link
-    print(tag_extractor(url))
+    out = tag_extractor(url)
+    if out is not None:
+        print(out)
+        final += out
+
+with open('sample.txt', 'w') as file:
+    json.dump(final, file, indent=2)
