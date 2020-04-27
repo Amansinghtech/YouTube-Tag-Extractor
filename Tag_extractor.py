@@ -1,20 +1,27 @@
 from bs4 import BeautifulSoup
-# from selenium import webdriver
 import json
-# import time
-import urllib.request as req
+import requests as req
+import urllib.parse as par
 
-# options = webdriver.ChromeOptions()
-# options.add_argument("--log-level=3")
+keyword = input("Enter a Keyword:")
+while keyword == '' or keyword == ' ':
+    print("Invalid input detected")
+    keyword = input("Enter a Keyword:")
 
-# driver = webdriver.Chrome('chromedriver.exe', options=options)
-# driver.get('https://www.youtube.com/watch?v=EtgSZGWb2m0&t=18s')
-# content = driver.page_source
-content = req.urlopen('https://www.youtube.com/watch?v=EtgSZGWb2m0&t=18s')
-# time.sleep(5)
-# driver.close()
-def tag_extractor(content):
-    soup = BeautifulSoup(content, 'html.parser')
+def walker(keyword):    
+    search = {'search_query':keyword}
+    url =  'https://www.youtube.com/results?{}'.format(par.urlencode(search))
+    print("Url Generated: "+url)
+    content = req.get(url)
+    soup = BeautifulSoup(content.content, 'html.parser')    
+    a_tags = soup.findAll("a", attrs={"class": "yt-uix-sessionlink spf-link", "aria-hidden":"true"})
+    for tag in a_tags:
+        if "/watch" in tag['href']:
+            yield tag['href']
+
+def tag_extractor(url):
+    content = req.get(url)
+    soup = BeautifulSoup(content.content, 'html.parser')
     for script in soup.findAll('script'):
         if 'keywords' in str(script):    
             start_ind = str(script).index('keywords')
@@ -26,4 +33,6 @@ def tag_extractor(content):
             final = final.replace(':', '')
             return (json.loads(final))
 
-print(tag_extractor(content))
+for link in walker(keyword):
+    url = 'https://www.youtube.com' + link
+    print(tag_extractor(url))
